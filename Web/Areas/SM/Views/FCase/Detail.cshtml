@@ -1,0 +1,768 @@
+﻿@model FCase
+@{
+    ViewData["Title"] = string.Format(@"Chi tiết thông tin ca bệnh F0: {0} (Mã định danh: {1})", Model.Name, Model.Code);
+    var addr = Model.Address + ", " + new HtmlHelpersDB(_repository).GetAddressByCommune(Model.AddressCommuneId);
+    var canDelete = new RoleHelper(memoryCache).CheckPermission(ModuleEnum.FCase, ActionEnum.Delete);
+    var canCreate = new RoleHelper(memoryCache).CheckPermission(ModuleEnum.FCase, ActionEnum.Create);
+    var canUpdate = new RoleHelper(memoryCache).CheckPermission(ModuleEnum.FCase, ActionEnum.Update);
+    var tableClass = ViewData["IsMobile"].ToString().ToLower() == "true" ? "table-scrollable" : "";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption">
+                    <span class="text-danger"><i class="fa fa-stethoscope"></i> @Html.Raw(ViewData["Title"])</span>
+                </div>
+                <div class="tools">
+                    <a href="javascript:;" class="collapse"> </a>
+                    <a href="#portlet-config" data-toggle="modal" class="config"> </a>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="tabbable-custom ">
+                    <ul class="nav nav-tabs ">
+                        <li class="active">
+                            <a href="#tab_5_1" data-toggle="tab" class="tab_5_1"> Chi tiết </a>
+                        </li>
+                        <li>
+                            <a href="#tab_5_2" data-toggle="tab" class="tab_5_2"> Kết quả xét nghiệm/điều trị </a>
+                        </li>
+                        <li>
+                            <a href="#tab_5_3" data-toggle="tab" class="tab_5_3"> Giấy tờ liên quan </a>
+                        </li>
+                        <li>
+                            <a href="#tab_5_4" data-toggle="tab" class="tab_5_4"> Danh sách F1 </a>
+                        </li>
+                        <li>
+                            <a href="#tab_5_5" data-toggle="tab" class="tab_5_5"> Danh sách F2 </a>
+                        </li>
+                        <li>
+                            <a href="#tab_5_6" data-toggle="tab" class="tab_5_6"> Danh sách F3 </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab_5_1">
+                            <div class="row static-info">
+                                <div class="col-md-2 name"> Mã định danh: </div>
+                                <div class="col-md-7 value"> @(string.IsNullOrEmpty(Model.Code)?"": Model.Code) </div>
+                            </div>
+                            <div class="row static-info">
+                                <div class="col-md-2 name"> Họ và tên: </div>
+                                <div class="col-md-7 value"> @Html.Raw(Model.Name) </div>
+                            </div>
+                            <div class="row static-info">
+                                <div class="col-md-2 name"> Năm sinh: </div>
+                                <div class="col-md-7 value"> @Html.Raw(Model.YearOfBirth) </div>
+                            </div>
+                            <div class="row static-info">
+                                <div class="col-md-2 name"> Số điện thoại: </div>
+                                <div class="col-md-7 value"> @Html.Raw(Model.PhoneNumber) </div>
+                            </div>
+                            <div class="row static-info">
+                                <div class="col-md-2 name"> Địa chỉ: </div>
+                                <div class="col-md-7 value"> @Html.Raw(addr) </div>
+                            </div>
+                            <div class="row static-info">
+                                <div class="col-md-2 name"> Ngày xác nhận F0: </div>
+                                <div class="col-md-7 value"> @(Model.F0Date.HasValue?Model.F0Date.Value.ToString("dd/MM/yyyy"):"") </div>
+                            </div>
+                            @if (Model.IsDeath)
+                            {
+                                <div class="row static-info">
+                                    <div class="col-md-2 name text-danger"> Đã tử vong: </div>
+                                    <div class="col-md-7 value text-danger"> Ngày @(Model.DeathDate.HasValue?Model.DeathDate.Value.ToString("dd/MM/yyyy"):"") </div>
+                                </div>
+                            }
+                            @if (Model.IsCured)
+                            {
+                                <div class="row static-info">
+                                    <div class="col-md-2 name text-success"> Đã khỏi bệnh: </div>
+                                    <div class="col-md-7 value text-success"> Ngày @(Model.CuredDate.HasValue?Model.CuredDate.Value.ToString("dd/MM/yyyy"):"") </div>
+                                </div>
+                            }
+                            <div class="row static-info">
+                                <div class="col-md-2 name"> Nơi phát hiện: </div>
+                                <div class="col-md-7 value">
+                                    @{
+                                        if (Model.IsFx2F0)
+                                        {
+                                            var additionalInfo = ViewData["FCaseAdditionalInfo"] as FCaseAdditionalInfo;
+                                            //var str1 = string.Format(@"Từ F{0} chuyển thành F0", additionalInfo.FromLevel);
+                                            var str1 = string.Format(@"Từ F{0} chuyển thành F0", Model.LevelInitial);
+                                            <span>@Html.Raw(str1)</span>
+                                            if (additionalInfo.F0Foretell == additionalInfo.F0Id)
+                                            {
+                                                <span>; F0 chỉ điểm: </span><a href="@Url.RouteUrl("FCaseDetail", new { id=additionalInfo.F0Foretell})">@Html.Raw(additionalInfo.F0ForetellName)</a>
+                                            }
+                                            else
+                                            {
+                                                <span>; F0 trực tiếp: </span><a href="@Url.RouteUrl("FCaseDetail", new { id=additionalInfo.F0Id})">@Html.Raw(additionalInfo.F0Name)</a>
+                                                <span>; F0 chỉ điểm: </span><a href="@Url.RouteUrl("FCaseDetail", new { id=additionalInfo.F0Foretell})">@Html.Raw(additionalInfo.F0ForetellName)</a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @Html.Raw(Model.DetectedPlaceId.HasValue ? Model.DetectedPlace.Name : "")
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="row static-info">
+                                <div class="col-md-2 name"> Nơi điều trị: </div>
+                                <div class="col-md-7 value"> @(Model.TreatmentFacilityId.HasValue? Model.TreatmentFacility.Name:"") </div>
+                            </div>
+                            <div class="row static-info">
+                                <div class="col-md-2 name"> Vùng dịch: </div>
+                                <div class="col-md-7 value"> @Html.Raw(Model.EpidemicArea.Name), @Html.Raw(Model.Commune.Name), @Html.Raw(Model.District.Name), @Html.Raw(Model.Province.Name) </div>
+                            </div>
+                            <div class="row static-info">
+                                <div class="col-md-2 name"> Số Fx đã truy vết: </div>
+                                <div class="col-md-7 value">
+                                    <span class="text-warning">@Model.FCases.Count() F1;</span>
+                                    <span class="text-primary">@Model.FCases.Sum(o => o.FCases.Count()) F2;</span>
+                                    <span class="text-success">@Model.FCases.Sum(o => o.FCases.Sum(x => x.FCases.Count())) F3</span>
+                                </div>
+                            </div>
+                            <div class="row static-info">
+                                <div class="col-md-2 name"> Kết quả xét nghiệm: </div>
+                                <div class="col-md-7 value">
+                                    @if (Model.TestResults.Any())
+                                    {
+                                        <span>Số lần test: @Model.TestResults.Count()</span><br />
+                                        <span>Dương tính: </span><span class="badge badge-danger"> @Model.TestResults.Count(o => o.IsPositive) </span><br />
+                                        <span>Âm tính: </span><span class="badge badge-success"> @Model.TestResults.Count(o => !o.IsPositive) </span>
+                                    }
+                                    else
+                                    {
+                                        <i>Chưa nhập kết quả!</i>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row static-info">
+                                <div class="col-md-2 name"> Yếu tố dịch tễ: </div>
+                                <div class="col-md-7 value">
+                                    @if (!string.IsNullOrEmpty(Model.Epidemiology))
+                                    {
+                                        @Html.Raw(Model.Epidemiology.Replace("\r\n", "<br />"))
+                                    }
+                                </div>
+                            </div>
+                            <div class="row static-info">
+                                <div class="col-md-2 name"> Lịch trình di chuyển: </div>
+                                <div class="col-md-7 value"> @Html.Raw(Model.MovingRoute.Replace("\r\n", "<br />")) </div>
+                            </div>
+                            <div class="row static-info">
+                                <div class="col-md-2 name"> Lịch sử tiếp xúc: </div>
+                                <div class="col-md-7 value"> @Html.Raw(Model.ContactHistory.Replace("\r\n", "<br />")) </div>
+                            </div>
+                            @if (!Model.IsDeath && !Model.IsCured)
+                            {
+                                <div class="row static-info">
+                                    <div class="col-md-2 name"> </div>
+                                    <div class="col-md-7 value">
+                                        <a href="/sm/fcase/confirm/@Model.Id/1" data-target="#ajax_modal2" data-toggle="modal" class="btn btn-primary"><i class="fa fa-check"></i> Xác nhận khỏi bệnh </a>
+                                        <a href="/sm/fcase/confirm/@Model.Id/0" data-target="#ajax_modal2" data-toggle="modal" class="btn btn-danger"><i class="fa fa-times"></i>Xác nhận tử vong</a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="tab-pane" id="tab_5_2">
+                            <div class="table-scrollable">
+                                <table class="table table-hover table-light">
+                                    <thead>
+                                        <tr>
+                                            <th> STT </th>
+                                            <th> Ngày lấy mẫu </th>
+                                            <th> Ngày trả kết quả </th>
+                                            <th> Chi tiết kết quả </th>
+                                            <th> Nhiệt độ đo được </th>
+                                            <th> Tình trạng </th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.TestResults.Any())
+                                        {
+                                            int i = 0;
+                                            foreach (var item in Model.TestResults.OrderByDescending(o => o.ResultDate))
+                                            {
+                                                i++;
+                                                <tr data-objectid="@item.Id">
+                                                    <td>@i</td>
+                                                    <td>@item.TestDate.ToString("dd/MM/yyyy")</td>
+                                                    <td>@item.ResultDate.ToString("dd/MM/yyyy")</td>
+                                                    <td>@Html.Raw(item.ResultDetail)</td>
+                                                    <td>@Html.Raw(item.Temperature)</td>
+                                                    <td>
+                                                        <span class="label label-sm @(item.IsPositive?"label-danger":"label-success")"> @(item.IsPositive?"Dương tính":"Âm tính") </span>
+                                                    </td>
+                                                    <td>
+                                                        @if (canUpdate)
+                                                        {
+                                                            <a href="/sm/fcase/test-result-update/@item.Id" data-target="#ajax_modal" data-toggle="modal" class="edit btn btn-xs blue"><i class="fa fa-edit"></i> Sửa</a>
+                                                        }
+                                                        @if (canDelete)
+                                                        {
+                                                            <a class="delete-test-result btn default btn-xs red-flamingo" href="javascript:;">
+                                                                <i class="fa fa-trash-o"></i> Xóa
+                                                            </a>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="6"><i>Chưa nhập kết quả xét nghiệm / điều trị!</i></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row static-info">
+                                <div class="col-md-2 name"><a href="/sm/fcase/test-result/@Model.Id" data-target="#ajax_modal" data-toggle="modal" class="btn btn-primary"><i class="fa fa-plus"></i> Nhập kết quả</a> </div>
+                                <div class="col-md-7 value"></div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tab_5_3">
+                            <div class="row">
+                                <form method="post" class="form-horizontal" id="fileupload" enctype="multipart/form-data">
+                                    <label class="col-md-1 control-label">@*Giấy tờ liên quan*@</label>
+                                    <div class="col-md-6">
+                                        <div class="inbox-compose-attachment">
+                                            <table role="presentation" class="table table-striped margin-top-10">
+                                                <tbody class="files">
+                                                    @if (Model.FCaseDocuments != null && Model.FCaseDocuments.Any())
+                                                    {
+                                                        foreach (var item in Model.FCaseDocuments)
+                                                        {
+                                                            var fileName = System.IO.Path.GetFileName(item.DocumentPath);
+                                                            <tr class="template-download" data-objectid="@item.Id">
+                                                                <td class="name" width="30%">
+                                                                    <a href="@item.DocumentPath" target="_blank" title="@fileName">@fileName</a>
+                                                                </td>
+                                                                <td class="size" width="10%">
+                                                                    <span></span>
+                                                                </td>
+                                                                <td colspan="2"></td>
+                                                                <td class="deletefile" width="40%" align="right">
+                                                                    <a class="btn default btn-sm delete-file">
+                                                                        <i class="fa fa-times"></i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                            <span class="btn red-haze btn-outline fileinput-button">
+                                                <i class="fa fa-plus"></i>
+                                                <span> Thêm tệp... </span>
+                                                <input type="file" name="files" multiple />
+                                            </span>
+                                        </div>
+                                        <script id="template-upload" type="text/x-tmpl">
+                                            {% for (var i=0, file; file=o.files[i]; i++) { %}
+                                            <tr class="template-upload fade">
+                                                <td class="name" width="30%">
+                                                    <span>{%=file.name%}</span>
+                                                </td>
+                                                <td class="size" width="10%">
+                                                    <span>{%=o.formatFileSize(file.size)%}</span>
+                                                </td> {% if (file.error) { %}
+                                                <td class="error" width="20%" colspan="2">
+                                                    <span class="label label-danger">Error</span> {%=file.error%}
+                                                </td> {% } else if (o.files.valid && !i) { %}
+                                                <td>
+                                                    <p class="size">{%=o.formatFileSize(file.size)%}</p>
+                                                    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                                                        <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                                                    </div>
+                                                </td> {% } else { %}
+                                                <td colspan="2"></td> {% } %}
+                                                <td class="cancel" width="40%" align="right">
+                                                    {% if (!i) { %}
+                                                    <span>Loại tệp tin này không được phép tải lên</span>
+                                                    <button class="btn btn-sm red cancel">
+                                                        <i class="fa fa-ban"></i>
+                                                        <span>Xóa</span>
+                                                    </button> {% } %}
+                                                </td>
+                                            </tr> {% } %}
+                                        </script>
+                                        <!-- The template to display files available for download -->
+                                        <script id="template-download" type="text/x-tmpl">
+                                            {% for (var i=0, file; file=o.files[i]; i++) { %}
+                                            <tr class="template-download fade">
+                                                {% if (file.error) { %}
+                                                <td class="name" width="30%">
+                                                    <span>{%=file.name%}</span>
+                                                </td>
+                                                <td class="size" width="10%">
+                                                    <span>{%=o.formatFileSize(file.size)%}</span>
+                                                </td>
+                                                <td class="error" width="30%" colspan="2">
+                                                    <span class="label label-danger">Error</span> {%=file.error%}
+                                                </td> {% } else { %}
+                                                <td class="name" width="30%">
+                                                    <a href="{%=file.url%}" title="{%=file.name%}" data-gallery="{%=file.thumbnail_url&&'gallery'%}" download="{%=file.name%}">{%=file.name%}</a>
+                                                </td>
+                                                <td class="size" width="10%">
+                                                    <span>{%=o.formatFileSize(file.size)%}</span>
+                                                </td>
+                                                <td colspan="2"></td> {% } %}
+                                                <td class="delete" width="40%" align="right">
+                                                    <button class="btn default btn-sm delete" data-type="{%=file.delete_type%}" data-url="{%=file.delete_url%}" {% if (file.delete_with_credentials) { %} data-xhr-fields='{"withCredentials":true}' {% } %}>
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </td>
+                                            </tr> {% } %}
+                                        </script>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- #region Danh sách F1 -->
+                        <div class="tab-pane" id="tab_5_4">
+                            <div class="portlet light portlet-fit portlet-datatable ">
+                                <div class="portlet-title">
+                                    <div class="caption">
+                                        <span class="caption-subject text-warning sbold uppercase"><i class="fa fa-users "></i> Danh sách F1</span>
+                                    </div>
+                                    <div class="actions">
+                                        <a href="@Url.RouteUrl("FCaseCreateFx", new { id=Model.Id })" class="btn btn-primary"><i class="fa fa-plus"></i> Nhập F1</a>
+                                        <div class="btn-group">
+                                            <a class="btn red btn-outline" href="javascript:;" data-toggle="dropdown">
+                                                <i class="fa fa-share"></i>
+                                                <span class="hidden-xs"> Kết xuất </span>
+                                                <i class="fa fa-angle-down"></i>
+                                            </a>
+                                            <ul class="dropdown-menu pull-right" id="f1_table_tools">
+                                                <li>
+                                                    <a href="javascript:;" data-action="0" class="tool-action">
+                                                        <i class="fa fa-file-excel-o"></i> Excel
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" data-action="1" class="tool-action">
+                                                        <i class="fa fa-file-excel-o"></i> CSV
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" data-action="2" class="tool-action">
+                                                        <i class="fa fa-file-pdf-o"></i> PDF
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" data-action="3" class="tool-action">
+                                                        <i class="icon-printer"></i> In danh sách
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" data-action="4" class="tool-action">
+                                                        <i class="fa fa-copy"></i> Copy danh sách
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <div class="table-container @tableClass">
+                                        <table class="table table-striped table-bordered table-hover" id="f1_table">
+                                            <thead>
+                                                <tr>
+                                                    <th> STT </th>
+                                                    <th> Họ và tên </th>
+                                                    <th>Năm sinh</th>
+                                                    <th>Số điện thoại</th>
+                                                    <th> Địa chỉ </th>
+                                                    <th>Phân loại nguy cơ</th>
+                                                    <th> Hình thức cách ly </th>
+                                                    <th> Nơi cách ly </th>
+                                                    <th> Số ngày cách ly </th>
+                                                    <th>Từ ngày - Đến ngày</th>
+                                                    <th> Số F2-F3</th>
+                                                    <th style="min-width: 190px;">Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.FCases.Any())
+                                                {
+                                                    int i = 0;
+                                                    foreach (var item in Model.FCases.OrderBy(o => o.RiskClassificationId))
+                                                    {
+                                                        i++;
+                                                        var addr2 = item.Address + ", " + new HtmlHelpersDB(_repository).GetAddressByCommune(item.CommuneId);
+                                                        var risk = item.IsF0 ? "<span class='text-danger'><b>Đã thành F0</b></span>" : (item.RiskClassificationId.HasValue ? item.RiskClassification.Name : "");
+                                                        <tr data-objectid="@item.Id">
+                                                            <td>@i</td>
+                                                            <td>@Html.Raw(item.Name)</td>
+                                                            <td>@Html.Raw(item.YearOfBirth)</td>
+                                                            <td>@Html.Raw(item.PhoneNumber)</td>
+                                                            <td>@Html.Raw(addr2)</td>
+                                                            <td>@Html.Raw(risk)</td>
+                                                            <td>@Html.Raw(item.QuarantineTypeId.HasValue ? item.QuarantineType.Name : "")</td>
+                                                            <td>@Html.Raw(item.QuarantinePlaceId.HasValue ? item.QuarantinePlace.Name : "")</td>
+                                                            <td>@item.QuarantineDays</td>
+                                                            <td>
+                                                                @(item.MonitorStartDate.HasValue ? item.MonitorStartDate.Value.ToString("dd/MM/yyyy"): "dd/MM/yyyy") - @(item.MonitorEndDate.HasValue ? item.MonitorEndDate.Value.ToString("dd/MM/yyyy"): "dd/MM/yyyy")
+                                                            </td>
+                                                            <th>
+                                                                <span class="text-primary">@item.FCases.Count() F2;</span><br />
+                                                                <span class="text-success">@item.FCases.Sum(o => o.FCases.Count()) F3</span>
+                                                            </th>
+                                                            <td>
+                                                                @if (canUpdate)
+                                                                {
+                                                                    <a href="@Url.RouteUrl("FCaseDetail", new { id=item.Id})" class="edit btn btn-xs green"><i class="fa fa-search"></i> Xem</a>
+                                                                    <a href="@Url.RouteUrl("FCaseUpdateFx", new { id=Model.Id, fxId = item.Id})" class="edit btn btn-xs blue"><i class="fa fa-edit"></i> Sửa</a>
+                                                                }
+                                                                @if (canDelete)
+                                                                {
+                                                                    <a class="delete-fx btn default btn-xs red-flamingo" href="javascript:;">
+                                                                        <i class="fa fa-trash-o"></i> Xóa
+                                                                    </a>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @*<tr>
+                                                        <td colspan="6"><i>Chưa nhập F1!</i></td>
+                                                    </tr>*@
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- #endregion -->
+                        <!-- #region Danh sách F2 -->
+                        <div class="tab-pane" id="tab_5_5">
+                            <div class="portlet light portlet-fit portlet-datatable ">
+                                <div class="portlet-title">
+                                    <div class="caption">
+                                        <span class="caption-subject text-primary sbold uppercase"><i class="fa fa-users"></i> Danh sách F2</span>
+                                    </div>
+                                    <div class="actions">                                        
+                                        <div class="btn-group">
+                                            <a class="btn red btn-outline" href="javascript:;" data-toggle="dropdown">
+                                                <i class="fa fa-share"></i>
+                                                <span class="hidden-xs"> Kết xuất </span>
+                                                <i class="fa fa-angle-down"></i>
+                                            </a>
+                                            <ul class="dropdown-menu pull-right" id="f2_table_tools">
+                                                <li>
+                                                    <a href="javascript:;" data-action="0" class="tool-action">
+                                                        <i class="fa fa-file-excel-o"></i> Excel
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" data-action="1" class="tool-action">
+                                                        <i class="fa fa-file-excel-o"></i> CSV
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" data-action="2" class="tool-action">
+                                                        <i class="fa fa-file-pdf-o"></i> PDF
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" data-action="3" class="tool-action">
+                                                        <i class="icon-printer"></i> In danh sách
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" data-action="4" class="tool-action">
+                                                        <i class="fa fa-copy"></i> Copy danh sách
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <div class="table-container @tableClass">
+                                        <table class="table table-striped table-bordered table-hover" id="f2_table">
+                                            <thead>
+                                                <tr>
+                                                    <th> STT </th>
+                                                    <th> Họ và tên </th>
+                                                    <th>Năm sinh</th>
+                                                    <th>Số điện thoại</th>
+                                                    <th> Địa chỉ </th>
+                                                    <th>Phân loại nguy cơ</th>
+                                                    <th> Hình thức cách ly </th>
+                                                    <th> Nơi cách ly </th>
+                                                    <th> Số ngày cách ly </th>
+                                                    <th>Từ ngày - Đến ngày</th>
+                                                    <th> Số F3</th>
+                                                    <th style="min-width: 220px;">Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.FCases.Any())
+                                                {
+                                                    int i = 0;
+                                                    foreach (var f1 in Model.FCases.OrderBy(o => o.RiskClassificationId))
+                                                    {
+                                                        if (f1.FCases.Any())
+                                                        {
+                                                            foreach (var f2 in f1.FCases.OrderBy(x => x.RiskClassificationId))
+                                                            {
+                                                                i++;
+                                                                var addr2 = f2.Address + ", " + new HtmlHelpersDB(_repository).GetAddressByCommune(f2.CommuneId);
+                                                                var risk = f2.IsF0 ? "<span class='text-danger'><b>Đã thành F0</b></span>" : (f2.RiskClassificationId.HasValue ? f2.RiskClassification.Name : "");
+                                                                <tr data-objectid="@f2.Id">
+                                                                    <td>@i</td>
+                                                                    <td>@Html.Raw(f2.Name)</td>
+                                                                    <td>@Html.Raw(f2.YearOfBirth)</td>
+                                                                    <td>@Html.Raw(f2.PhoneNumber)</td>
+                                                                    <td>@Html.Raw(addr2)</td>
+                                                                    <td>@Html.Raw(risk)</td>
+                                                                    <td>@Html.Raw(f2.QuarantineTypeId.HasValue ? f2.QuarantineType.Name : "")</td>
+                                                                    <td>@Html.Raw(f2.QuarantinePlaceId.HasValue ? f2.QuarantinePlace.Name : "")</td>
+                                                                    <td>@f2.QuarantineDays</td>
+                                                                    <td>
+                                                                        @(f2.MonitorStartDate.HasValue ? f2.MonitorStartDate.Value.ToString("dd/MM/yyyy"): "dd/MM/yyyy") - @(f2.MonitorEndDate.HasValue ? f2.MonitorEndDate.Value.ToString("dd/MM/yyyy"): "dd/MM/yyyy")
+                                                                    </td>
+                                                                    <th>
+                                                                        <span class="text-success">@f2.FCases.Count() F3;</span>
+                                                                    </th>
+                                                                    <td style="min-width: 220px;">
+                                                                        @if (canUpdate)
+                                                                        {
+                                                                            <a href="@Url.RouteUrl("FCaseDetail", new { id=f2.Id})" class="edit btn btn-xs green"><i class="fa fa-search"></i> Xem</a>
+                                                                            <a href="@Url.RouteUrl("FCaseUpdateFx", new { id=f1.Id, fxId = f2.Id})" class="edit btn btn-xs blue"><i class="fa fa-edit"></i> Sửa</a>
+                                                                        }
+                                                                        @if (canDelete)
+                                                                        {
+                                                                            <a class="delete-fx btn default btn-xs red-flamingo" href="javascript:;">
+                                                                                <i class="fa fa-trash-o"></i> Xóa
+                                                                            </a>
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @*<tr>
+                        <td colspan="6"><i>Chưa nhập F1!</i></td>
+                    </tr>*@
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- #endregion -->
+                        <!-- #region Danh sách F3 -->
+                        <div class="tab-pane" id="tab_5_6">
+                            <div class="portlet light portlet-fit portlet-datatable ">
+                                <div class="portlet-title">
+                                    <div class="caption">
+                                        <span class="caption-subject text-success sbold uppercase"><i class="fa fa-users"></i> Danh sách F3</span>
+                                    </div>
+                                    <div class="actions">
+                                        <div class="btn-group">
+                                            <a class="btn red btn-outline" href="javascript:;" data-toggle="dropdown">
+                                                <i class="fa fa-share"></i>
+                                                <span class="hidden-xs"> Kết xuất </span>
+                                                <i class="fa fa-angle-down"></i>
+                                            </a>
+                                            <ul class="dropdown-menu pull-right" id="f3_table_tools">
+                                                <li>
+                                                    <a href="javascript:;" data-action="0" class="tool-action">
+                                                        <i class="fa fa-file-excel-o"></i> Excel
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" data-action="1" class="tool-action">
+                                                        <i class="fa fa-file-excel-o"></i> CSV
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" data-action="2" class="tool-action">
+                                                        <i class="fa fa-file-pdf-o"></i> PDF
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" data-action="3" class="tool-action">
+                                                        <i class="icon-printer"></i> In danh sách
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:;" data-action="4" class="tool-action">
+                                                        <i class="fa fa-copy"></i> Copy danh sách
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <div class="table-container @tableClass">
+                                        <table class="table table-striped table-bordered table-hover" id="f3_table">
+                                            <thead>
+                                                <tr>
+                                                    <th> STT </th>
+                                                    <th> Họ và tên </th>
+                                                    <th>Năm sinh</th>
+                                                    <th>Số điện thoại</th>
+                                                    <th> Địa chỉ </th>
+                                                    <th>Phân loại nguy cơ</th>
+                                                    <th> Hình thức cách ly </th>
+                                                    <th> Nơi cách ly </th>
+                                                    <th> Số ngày cách ly </th>
+                                                    <th>Từ ngày - Đến ngày</th>
+                                                    @*<th> Số F4</th>*@
+                                                    <th style="min-width: 220px;">Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.FCases.Any())
+                                                {
+                                                    int i = 0;
+                                                    foreach (var f1 in Model.FCases.OrderBy(o => o.RiskClassificationId))
+                                                    {
+                                                        if (f1.FCases.Any())
+                                                        {
+                                                            foreach (var f2 in f1.FCases.OrderBy(x => x.RiskClassificationId))
+                                                            {
+                                                                if (f2.FCases.Any())
+                                                                {
+                                                                    foreach (var f3 in f2.FCases.OrderBy(z => z.RiskClassificationId))
+                                                                    {
+                                                                        i++;
+                                                                        var addr2 = f3.Address + ", " + new HtmlHelpersDB(_repository).GetAddressByCommune(f3.CommuneId);
+                                                                        var risk = f3.IsF0 ? "<span class='text-danger'><b>Đã thành F0</b></span>" : (f3.RiskClassificationId.HasValue ? f3.RiskClassification.Name : "");
+                                                                        <tr data-objectid="@f3.Id">
+                                                                            <td>@i</td>
+                                                                            <td>@Html.Raw(f3.Name)</td>
+                                                                            <td>@Html.Raw(f3.YearOfBirth)</td>
+                                                                            <td>@Html.Raw(f3.PhoneNumber)</td>
+                                                                            <td>@Html.Raw(addr2)</td>
+                                                                            <td>@Html.Raw(risk)</td>
+                                                                            <td>@Html.Raw(f3.QuarantineTypeId.HasValue ? f3.QuarantineType.Name : "")</td>
+                                                                            <td>@Html.Raw(f3.QuarantinePlaceId.HasValue ? f3.QuarantinePlace.Name : "")</td>
+                                                                            <td>@f3.QuarantineDays</td>
+                                                                            <td>
+                                                                                @(f3.MonitorStartDate.HasValue ? f3.MonitorStartDate.Value.ToString("dd/MM/yyyy"): "dd/MM/yyyy") - @(f3.MonitorEndDate.HasValue ? f3.MonitorEndDate.Value.ToString("dd/MM/yyyy"): "dd/MM/yyyy")
+                                                                            </td>
+                                                                            @*<th>
+                                                <span class="text-info">@f3.FCases.Count() F4;</span>
+                                            </th>*@
+                                                                            <td style="min-width: 220px;">
+                                                                                @if (canUpdate)
+                                                                                {
+                                                                                    <a href="@Url.RouteUrl("FCaseDetail", new { id=f3.Id})" class="edit btn btn-xs green"><i class="fa fa-search"></i> Xem</a>
+                                                                                    <a href="@Url.RouteUrl("FCaseUpdateFx", new { id=f2.Id, fxId = f3.Id})" class="edit btn btn-xs blue"><i class="fa fa-edit"></i> Sửa</a>
+                                                                                }
+                                                                                @if (canDelete)
+                                                                                {
+                                                                                    <a class="delete-fx btn default btn-xs red-flamingo" href="javascript:;">
+                                                                                        <i class="fa fa-trash-o"></i> Xóa
+                                                                                    </a>
+                                                                                }
+                                                                            </td>
+                                                                        </tr>
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @*<tr>
+                        <td colspan="6"><i>Chưa nhập F1!</i></td>
+                    </tr>*@
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- #endregion -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<input type="hidden" id="CurrentFCaseId" value="@Model.Id" />
+<form class="display-minimal" id="frm_token">
+    @Html.AntiForgeryToken()
+</form>
+@section ModalContainer{
+    <div class="modal fade" id="ajax_modal" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img src="~/themes/m475/assets/global/img/loading-spinner-grey.gif" alt="" class="loading">
+                    <span> &nbsp;&nbsp;Vui lòng đợi... </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade bs-modal-sm" id="ajax_modal2" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img src="~/themes/m475/assets/global/img/loading-spinner-grey.gif" alt="" class="loading">
+                    <span> &nbsp;&nbsp;Vui lòng đợi... </span>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section Styles{
+    <link href="/themes/m475//assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+    <link href="/themes/m475//assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="/themes/m475/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css" rel="stylesheet" type="text/css" />
+    <link href="/themes/m475/assets/global/plugins/jquery-file-upload/blueimp-gallery/blueimp-gallery.min.css" rel="stylesheet" type="text/css" />
+    <link href="/themes/m475/assets/global/plugins/jquery-file-upload/css/jquery.fileupload.css" rel="stylesheet" type="text/css" />
+    <link href="/themes/m475/assets/global/plugins/jquery-file-upload/css/jquery.fileupload-ui.css" rel="stylesheet" type="text/css" />
+}
+@section styles2{
+
+}
+@section Scripts {
+    <script src="/themes/m475/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.vi.min.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/jquery-file-upload/js/vendor/jquery.ui.widget.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/jquery-file-upload/js/vendor/tmpl.min.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/jquery-file-upload/js/vendor/load-image.min.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/jquery-file-upload/js/vendor/canvas-to-blob.min.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/jquery-file-upload/blueimp-gallery/jquery.blueimp-gallery.min.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/jquery-file-upload/js/jquery.iframe-transport.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/jquery-file-upload/js/jquery.fileupload.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-process.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-image.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-audio.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-video.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-validate.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-ui.js" type="text/javascript"></script>
+}
+@section Scripts2 {
+    <script src="~/themes/m475/assets/pages/scripts/common.js" type="text/javascript"></script>
+    <script src="~/themes/m475/assets/pages/scripts/fcase-detail.js" type="text/javascript"></script>
+}

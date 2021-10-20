@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Danh sách tài khoản";
+    var canDelete = new RoleHelper(memoryCache).CheckPermission(ModuleEnum.Account, ActionEnum.Delete);
+    var canCreate = new RoleHelper(memoryCache).CheckPermission(ModuleEnum.Account, ActionEnum.Create);
+    var canUpdate = new RoleHelper(memoryCache).CheckPermission(ModuleEnum.Account, ActionEnum.Update);
+    var tableClass = ViewData["IsMobile"].ToString().ToLower() == "true" ? "table-scrollable" : "";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet light portlet-fit portlet-datatable bordered">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-users font-green-sharp "></i>
+                    <span class="caption-subject font-green-sharp bold ">@Html.Raw(ViewData["Title"])</span>
+                </div>
+                <div class="actions">
+                    @if (canCreate)
+                    {
+                        <a href="@Url.RouteUrl("Account_Create")" class="btn btn-sm green"><i class="fa fa-plus"></i> Nhập mới</a>
+                    }
+                    <div class="btn-group">
+                        <a class="btn green-jungle" href="javascript:;" data-toggle="dropdown">
+                            <i class="fa fa-share"></i>
+                            <span class="hidden-xs"> Chức năng </span>
+                            <i class="fa fa-angle-down"></i>
+                        </a>
+                        <ul class="dropdown-menu pull-right" id="datatable_ajax_tools">
+                            <li>
+                                <a href="javascript:;" data-action="0" class="tool-action">
+                                    <i class="icon-printer"></i> In danh sách
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" data-action="1" class="tool-action">
+                                    <i class="fa fa-copy"></i> Copy vào bộ nhớ tạm
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" data-action="2" class="tool-action">
+                                    <i class="fa fa-file-pdf-o"></i> Xuất ra PDF
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" data-action="3" class="tool-action">
+                                    <i class="fa fa-file-excel-o"></i> Xuất ra Excel
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" data-action="4" class="tool-action">
+                                    <i class="fa fa-file-excel-o"></i> Xuất ra CSV
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="table-container @tableClass">
+                    <div class="table-actions-wrapper-1">
+                    </div>
+                    <div class="table-actions-wrapper-2">
+
+                    </div>
+                    <table class="table table-striped table-hover table-bordered" id="datatable_ajax">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Họ và tên</th>
+                                <th>Tên truy cập</th>
+                                <th>Email</th>
+
+                                <th>Ngày tạo</th>
+                                <th>Người tạo</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<input type="hidden" id="hid_canUpdate" value="@canUpdate.ToString().ToLower()" />
+<input type="hidden" id="hid_canDelete" value="@canDelete.ToString().ToLower()" />
+<form class="display-minimal" id="frm_token">
+    @Html.AntiForgeryToken()
+</form>
+@section Styles{
+    <link href="~/themes/m475/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/themes/m475/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
+}
+@section Scripts {
+    <script src="~/themes/m475/assets/global/scripts/datatable-ajax.js" asp-append-version="true" type="text/javascript"></script>
+    <script src="~/themes/m475/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+    <script src="~/themes/m475/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
+}
+@section Scripts2 {
+    <script src="~/themes/m475/assets/pages/scripts/account-index.js" asp-append-version="true" type="text/javascript"></script>
+}

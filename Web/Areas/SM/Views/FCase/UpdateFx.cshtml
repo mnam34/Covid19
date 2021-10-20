@@ -1,0 +1,180 @@
+﻿@model FxCaseUpdate
+@{
+    ViewData["Title"] = string.Format(@"Cập nhật trường hợp F{0} của {1}", Model.NextLevel, Model.ParrentName);
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption font-green-haze">
+                    <i class="fa fa-plus font-green-haze"></i>
+                    <span class="caption-subject bold ">@Html.Raw(ViewData["Title"])</span>
+                </div>
+                <div class="actions">
+                    <a title="Mở rộng" data-original-title="" href="javascript:;" class="btn btn-circle btn-icon-only btn-default fullscreen"> </a>
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <form asp-controller="FCase" asp-action="UpdateFx" method="post" class="form-horizontal">
+                    <input type="hidden" asp-for="FCaseId" />
+                    <input type="hidden" asp-for="FxCaseId" />
+                    <input type="hidden" asp-for="ParrentName" />
+                    <input type="hidden" asp-for="NextLevel" />
+
+                    <div class="form-body">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Name" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="Name" class="form-control first-focus" autocomplete="nope" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="YearOfBirth" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="YearOfBirth" class="form-control" autocomplete="nope" />
+                                <span asp-validation-for="YearOfBirth" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PhoneNumber" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="PhoneNumber" class="form-control" autocomplete="nope" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Address" class="col-md-3 control-label"></label>
+                            <div class="col-md-3">
+                                <input asp-for="Address" class="form-control" autocomplete="nope" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <select asp-for="AddressProvinceId" asp-items="@((SelectList)ViewData["ProvinceAddr"])" style="min-width: 150px;">
+                                    <option value="">---Chọn---</option>
+                                </select>
+                                <select asp-for="AddressDistrictId" asp-items="@((SelectList)ViewData["DistrictAddr"])" style="min-width: 150px;">
+                                    <option value="">---Chọn---</option>
+                                </select>
+                                <select asp-for="AddressCommuneId" asp-items="@((SelectList)ViewData["CommuneAddr"])" style="min-width: 150px;">
+                                    <option value="">---Chọn---</option>
+                                </select>
+                                <span asp-validation-for="AddressProvinceId" class="text-danger"></span>
+                                <span asp-validation-for="AddressDistrictId" class="text-danger"></span>
+                                <span asp-validation-for="AddressCommuneId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RiskClassificationId" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <select asp-for="RiskClassificationId" asp-items="@((SelectList)ViewData["RiskClassification"])" class="form-control">
+                                    <option value="">---Chọn---</option>
+                                </select>
+                                <span asp-validation-for="RiskClassificationId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TracingDate" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="TracingDate" class="form-control date-picker" autocomplete="nope" />
+                                <span asp-validation-for="TracingDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="FxContactDate" class="col-md-3 control-label">Ngày tiếp xúc với F@(Model.NextLevel-1)</label>
+                            <div class="col-md-4">
+                                <input asp-for="FxContactDate" class="form-control date-picker" autocomplete="nope" />
+                                <span asp-validation-for="FxContactDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Epidemiology" class="col-md-3 control-label"></label>
+                            <div class="col-md-6">
+                                <textarea asp-for="Epidemiology" class="form-control" autocomplete="nope" rows="3"></textarea>
+                                <span asp-validation-for="Epidemiology" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="MovingRoute" class="col-md-3 control-label"></label>
+                            <div class="col-md-6">
+                                <textarea asp-for="MovingRoute" class="form-control" autocomplete="nope" rows="3"></textarea>
+                                <span asp-validation-for="MovingRoute" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ContactHistory" class="col-md-3 control-label"></label>
+                            <div class="col-md-6">
+                                <textarea asp-for="ContactHistory" class="form-control" autocomplete="nope" rows="3"></textarea>
+                                <span asp-validation-for="ContactHistory" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <hr />
+                        <h4>Thông tin cách ly giám sát</h4>
+                        <div class="form-group">
+                            <label asp-for="QuarantineTypeId" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <select asp-for="QuarantineTypeId" asp-items="@((SelectList)ViewData["QuarantineType"])" class="form-control">
+                                    <option value="">---Chọn---</option>
+                                </select>
+                                <span asp-validation-for="QuarantineTypeId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="QuarantinePlaceId" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <select asp-for="QuarantinePlaceId" asp-items="@((SelectList)ViewData["QuarantinePlace"])" class="form-control">
+                                    <option value="">---Chọn---</option>
+                                </select>
+                                <span asp-validation-for="QuarantinePlaceId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="QuarantineDays" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="QuarantineDays" class="form-control" autocomplete="nope" />
+                                <span asp-validation-for="QuarantineDays" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="MonitorStartDate" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="MonitorStartDate" class="form-control date-picker" autocomplete="nope" />
+                                <span asp-validation-for="MonitorStartDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="MonitorEndDate" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="MonitorEndDate" class="form-control date-picker" autocomplete="nope" />
+                                <span asp-validation-for="MonitorEndDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="row">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button type="submit" class="btn green"><i class="fa fa-check"></i> Ghi nhận</button>
+                                <a href="@Url.RouteUrl("FCaseDetail", new { id = Model.FCaseId})#tab_5_4" cl class="btn default">Hủy bỏ</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+@section styles {
+    <link href="/themes/m475/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css" rel="stylesheet" type="text/css" />
+}
+@section Scripts {
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script src="/themes/m475/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.vi.min.js" type="text/javascript"></script>
+}
+@section Scripts2 {
+    <script src="~/themes/m475/assets/pages/scripts/common.js" type="text/javascript"></script>
+    <script src="~/themes/m475/assets/pages/scripts/fcase-create-fx.js" type="text/javascript"></script>
+}

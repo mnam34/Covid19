@@ -1,0 +1,77 @@
+﻿@model AccountCreate
+@{
+    ViewData["Title"] = "Nhập tài khoản mới";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption font-green-haze">
+                    <i class="fa fa-plus font-green-haze"></i>
+                    <span class="caption-subject bold ">@Html.Raw(ViewData["Title"])</span>
+                </div>
+                <div class="actions">
+                    <a title="Mở rộng" data-original-title="" href="javascript:;" class="btn btn-circle btn-icon-only btn-default fullscreen"> </a>
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <form asp-controller="Account" asp-action="Create" method="post" class="form-horizontal">
+                    <div class="form-body">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Name" class="col-md-2 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="Name" class="form-control first-focus" autocomplete="nope" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        @*<div class="form-group">
+                            <label asp-for="Email" class="col-md-2 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="Email" class="form-control" autocomplete="nope" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>*@
+                        <div class="form-group">
+                            <label asp-for="LoginName" class="col-md-2 control-label s_estimation"></label>
+                            <div class="col-md-4">
+                                <input asp-for="LoginName" class="form-control" autocomplete="nope" />
+                                <span asp-validation-for="LoginName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Password" class="col-md-2 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="Password" class="form-control" autocomplete="nope" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="form-actions">
+                        <div class="row">
+                            <div class="col-md-offset-2 col-md-10">
+                                <button type="submit" class="btn green"><i class="fa fa-check"></i> Ghi nhận</button>
+                                <a href="@Url.RouteUrl("Account_Index")" cl class="btn default">Hủy bỏ</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+@section styles {
+    
+}
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
+@section Scripts2 {
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+           
+        });
+    </script>
+}

@@ -1,0 +1,41 @@
+.page-header .page-header-top .page-logo {
+    width: 80px;
+}
+.page-header .page-header-top .site-title {
+    float: left;
+    display: block;
+    height: 75px;
+}
+
+.page-header .page-header-top .page-logo .logo-default {
+    margin: 10px 0 0 0;
+    max-height: 55px;
+}
+.page-title-h3 {
+    font-family: 'Roboto Condensed',sans-serif;
+    margin-top: 5px;
+}
+.select2-container
+{
+    display:inline-block !important;
+}
+.sweet-overlay {
+    z-index: 99999999 !important;
+}
+.sweet-alert {
+    z-index: 999999991 !important;
+}
+.swal2-container {
+    z-index: 999999!important;
+}
+/*.modal-backdrop
+{
+    z-index:9961;
+}
+.model{
+    z-index:9962;
+}*/
+.page-header .page-header-menu .hor-menu .navbar-nav > li.classic-menu-dropdown .dropdown-menu {
+    min-width: 300px;
+    max-width: 355px;
+}

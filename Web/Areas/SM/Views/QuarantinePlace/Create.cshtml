@@ -1,0 +1,110 @@
+﻿@model QuarantinePlaceCreating
+@{
+    ViewData["Title"] = "Nhập Khu cách ly tập trung";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption font-green-haze">
+                    <i class="fa fa-plus font-green-haze"></i>
+                    <span class="caption-subject bold ">@Html.Raw(ViewData["Title"])</span>
+                </div>
+                <div class="actions">
+                    <a title="Mở rộng" data-original-title="" href="javascript:;" class="btn btn-circle btn-icon-only btn-default fullscreen"> </a>
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <form asp-controller="QuarantinePlace" asp-action="Create" method="post" class="form-horizontal">
+                    <div class="form-body">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Name" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="Name" class="form-control first-focus" autocomplete="nope" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Address" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="Address" class="form-control" autocomplete="nope" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Capacity" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="Capacity" class="form-control" autocomplete="nope" />
+                                <span asp-validation-for="Capacity" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ProvinceId" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <select asp-for="ProvinceId" asp-items="@((SelectList)ViewData["Province"])" class="form-control">
+                                    <option value="">---Chọn---</option>
+                                </select>
+                                <span asp-validation-for="ProvinceId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="DistrictId" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <select asp-for="DistrictId" asp-items="@((SelectList)ViewData["District"])" class="form-control">
+                                    <option value="">---Chọn---</option>
+                                </select>
+                                <span asp-validation-for="DistrictId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CommuneId" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <select asp-for="CommuneId" asp-items="@((SelectList)ViewData["Commune"])" class="form-control">
+                                    <option value="">---Chọn---</option>
+                                </select>
+                                <span asp-validation-for="CommuneId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="OpenDate" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="OpenDate" class="form-control date-picker" autocomplete="nope" />
+                                <span asp-validation-for="OpenDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CloseDate" class="col-md-3 control-label"></label>
+                            <div class="col-md-4">
+                                <input asp-for="CloseDate" class="form-control date-picker" autocomplete="nope" />
+                                <span asp-validation-for="CloseDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="row">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button type="submit" class="btn green"><i class="fa fa-check"></i> Ghi nhận</button>
+                                <a href="@Url.RouteUrl("QuarantinePlaceIndex")" cl class="btn default">Hủy bỏ</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section styles {
+    <link href="/themes/m475/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css" rel="stylesheet" type="text/css" />
+}
+@section Scripts {
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script src="/themes/m475/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js" type="text/javascript"></script>
+    <script src="/themes/m475/assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.vi.min.js" type="text/javascript"></script>
+}
+@section Scripts2 {
+    <script src="~/themes/m475/assets/pages/scripts/common.js" type="text/javascript"></script>
+    <script src="~/themes/m475/assets/pages/scripts/qp-create.js" type="text/javascript"></script>
+}

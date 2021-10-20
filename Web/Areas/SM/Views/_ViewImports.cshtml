@@ -1,0 +1,15 @@
+@using Web
+@using Web.Helpers
+@using Entities
+@using Entities.Enums
+@using Microsoft.Extensions.Caching.Memory
+@using Entities.ViewModels
+@using Interface
+@using DataAccess
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Http
+@using System.IO
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IMemoryCache memoryCache
+@inject IRepository _repository
+@inject DataContext _context

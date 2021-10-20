@@ -1,0 +1,41 @@
+﻿@model FCaseConfirm
+<div class="modal-header modal-header-fcase-confirm-f0">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    <h4 class="modal-title"><b>Xác nhận đã trở thành F0</b></h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12 form">
+            <form action="#" class="frm-modal-form-fcase-confirm-f0">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" value="@Model.Id">
+                <input type="hidden" asp-for="Type" value="@Model.Type">
+                <div class="form-body">
+                    <div class="form-group">
+                        <label class="control-label">Ngày xác nhận trở thành F0</label>
+                        <input asp-for="Date" class="form-control first-focus date-picker" autocomplete="nope" />
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn blue btn-modal-submit-fcase-confirm-f0">Ghi nhận</button>
+    <button type="button" class="btn default" data-dismiss="modal">Đóng lại</button>
+</div>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        if (jQuery().datepicker) {
+            $('.date-picker').datepicker({
+                rtl: App.isRTL(),
+                orientation: "left",
+                autoclose: true,
+                format: 'dd/mm/yyyy',
+                language: 'vi'
+            });
+        };
+
+    });
+</script>

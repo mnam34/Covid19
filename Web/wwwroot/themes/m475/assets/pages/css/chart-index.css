@@ -1,0 +1,60 @@
+﻿.panel-body ul li {
+    margin-bottom: 0px;
+}
+
+.orgchart {
+    background: #fff;
+}
+#chart-container {
+    position: relative;
+    height: 520px;
+}
+.oc-export-btn {
+    display: none;
+}
+
+    .orgchart .f0-level .title {
+        background-color: #ed6b75;
+    }
+
+    .orgchart .f0-level .content {
+        border-color: #ed6b75;
+    }
+
+
+    .orgchart .f1-level .title {
+        background-color: #F1C40F;
+    }
+
+    .orgchart .f1-level .content {
+        border-color: #F1C40F;
+    }
+
+
+    .orgchart .f2-level .title {
+        background-color: #337ab7;
+    }
+
+    .orgchart .f2-level .content {
+        border-color: #337ab7;
+    }
+
+    .orgchart .f3-level .title {
+        background-color: #36c6d3;
+    }
+
+    .orgchart .f3-level .content {
+        border-color: #36c6d3;
+    }
+/*.tree-f0 {
+    color: #ed6b75;
+}
+.tree-f1 {
+    color: #F1C40F;
+}
+.tree-f2 {
+    color: #337ab7;
+}
+.tree-f3 {
+    color: #36c6d3;
+}*/

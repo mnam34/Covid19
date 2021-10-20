@@ -1,0 +1,57 @@
+﻿@model FCaseTestResultUpdate
+<div class="modal-header modal-header-test-result-update">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    <h4 class="modal-title"><b>Cập nhật kết quả các đợt xét nghiệm</b></h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12 form">
+            <form action="#" class="frm-modal-form-test-result-update">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" value="@Model.Id">
+                <div class="form-body">
+                    <div class="form-group">
+                        <label class="control-label">Ngày lấy mẫu</label>
+                        <input asp-for="TestDate" class="form-control first-focus date-picker" autocomplete="nope" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Ngày trả kết quả</label>
+                        <input asp-for="ResultDate" class="form-control date-picker" autocomplete="nope" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Kết quả</label><br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="IsPositive1" name="IsPositive" value="false" class="md-radiobtn" @(!Model.IsPositive ? " checked='checked'" : "") /> <label for="IsPositive1">Âm tính</label><br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="IsPositive2" name="IsPositive" value="true" class="md-radiobtn" @(Model.IsPositive ? " checked='checked'" : "") /> <label for="IsPositive2">Dương tính</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Nhiệt độ đo được</label>
+                        <input asp-for="Temperature" class="form-control" autocomplete="nope" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Chi tiết kết quả</label>
+                        <textarea asp-for="ResultDetail" class="form-control" rows="4"></textarea>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn blue btn-modal-submit-test-result-update">Ghi nhận</button>
+    <button type="button" class="btn default" data-dismiss="modal">Đóng lại</button>
+</div>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        if (jQuery().datepicker) {
+            $('.date-picker').datepicker({
+                rtl: App.isRTL(),
+                orientation: "left",
+                autoclose: true,
+                format: 'dd/mm/yyyy',
+                language: 'vi'
+            });
+        };
+
+    });
+</script>

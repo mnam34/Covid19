@@ -1,0 +1,17 @@
+﻿{
+    "search": "&nbsp;&nbsp;&nbsp;Tìm kiếm: ",
+    "lengthMenu": "Hiển thị _MENU_ bản ghi mỗi trang",
+    "info": "Tổng số _TOTAL_ bản ghi",
+    "infoFiltered": "(tìm trong tổng số _MAX_ bản ghi)",
+    "infoEmpty": " Không tìm thấy bản ghi nào",
+    "emptyTable": "Không có dữ liệu",
+    "zeroRecords": "Không tìm thấy dữ liệu",
+    "paginate": {
+        "previous": "<",
+        "next": ">",
+        "last": "Cuối",
+        "first": "Đầu",
+        "page": "Trang",
+        "pageOf": " trong tổng số"
+    }
+}
